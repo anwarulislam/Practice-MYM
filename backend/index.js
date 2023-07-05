@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 
 const secretKey = "alsjkakdjkathisisasecretkey";
+const NASA_API_KEY = "joS4ocJX2mpkCJHpGk0PLwBX9T0daTTQVKdpI9Mf";
 
 connectDB();
 
@@ -46,9 +47,16 @@ app.post("/sign-up", async (req, res) => {
   const newuser = new User({ username, password });
   await newuser.save();
 
+  const token = jwt.sign(
+    {
+      username,
+    },
+    secretKey
+  );
+
   res
     .status(201)
-    .json({ message: "User created successfully", user: user.toJSON() });
+    .json({ message: "User created successfully", username, token });
 });
 
 // login route
@@ -84,6 +92,7 @@ app.post("/login", async (req, res) => {
 app.get("/nasa-image-of-the-day", async (req, res) => {
   // authenticate user
   const authHeader = req.headers.authorization;
+
   if (!authHeader) {
     return res.status(401).json({
       message: "Authorization header required",
@@ -91,10 +100,10 @@ app.get("/nasa-image-of-the-day", async (req, res) => {
   }
 
   const token = authHeader.split(" ")[1];
+  console.log(token);
   try {
     const payload = jwt.verify(token, secretKey);
     // fetch nasa image of the day
-    const NASA_API_KEY = "joS4ocJX2mpkCJHpGk0PLwBX9T0daTTQVKdpI9Mf";
     const url = `https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`;
     const response = await fetch(url);
     const data = await response.json();
