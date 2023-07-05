@@ -12,6 +12,8 @@ function nasa() {
 
   function getNasaImageOfTheDay() {
     const token = localStorage.getItem("token");
+
+    console.log(token);
     if (!token) {
       setIsLoggedIn(false);
       return;
@@ -26,13 +28,24 @@ function nasa() {
         Authorization: "Bearer " + token,
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        console.log(response.status);
+        if (response.status === 401) {
+          setIsLoggedIn(false);
+          setIsLoading(false);
+          return null;
+        }
+        return response.json();
+      })
       .then((data) => {
-        setIsLoggedIn(true);
-        setIsLoading(false);
-        setNasaImage(data.url);
-        setNasaTitle(data.title);
-        setNasaExplanation(data.explanation);
+        console.log(data);
+        if (data) {
+          setIsLoggedIn(true);
+          setIsLoading(false);
+          setNasaImage(data.url);
+          setNasaTitle(data.title);
+          setNasaExplanation(data.explanation);
+        }
       });
   }
 

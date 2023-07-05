@@ -11,6 +11,7 @@ function login({ setUser }) {
 
   function setToken(userToken) {
     localStorage.setItem("token", userToken);
+    location.href = "/";
   }
 
   const handleSubmit = (e) => {
@@ -32,7 +33,6 @@ function login({ setUser }) {
       .then((data) => {
         if (data.token) {
           setToken(data.token);
-          location.href = "/";
         } else {
           setError(data.message);
         }
@@ -111,7 +111,7 @@ function login({ setUser }) {
           </a>
         </p>
 
-        <GoogleBtn />
+        <GoogleBtn setToken={setToken} />
       </div>
       <svg xmlns="http://www.w3.org/2000/svg" className="icons">
         <symbol id="icon-arrow-right" viewBox="0 0 1792 1792">
