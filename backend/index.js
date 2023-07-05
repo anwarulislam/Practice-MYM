@@ -13,7 +13,7 @@ const app = express();
 app.use(cors());
 
 // body parser middleware
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: false }));
 
 // json middleware
 app.use(express.json());
@@ -53,9 +53,8 @@ app.post("/sign-up", async (req, res) => {
 
 // login route
 app.post("/login", async (req, res) => {
-  console.log(req.body)
+  console.log(req.body);
   const { username, password } = req.body;
-
 
   // find user in database
   const user = await User.findOne({ username });
@@ -80,6 +79,31 @@ app.post("/login", async (req, res) => {
   );
 
   res.json({ message: "User logged in successfully", username, token });
+});
+
+app.get("/nasa-image-of-the-day", async (req, res) => {
+  // authenticate user
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({
+      message: "Authorization header required",
+    });
+  }
+
+  const token = authHeader.split(" ")[1];
+  try {
+    const payload = jwt.verify(token, secretKey);
+    // fetch nasa image of the day
+    const NASA_API_KEY = "joS4ocJX2mpkCJHpGk0PLwBX9T0daTTQVKdpI9Mf";
+    const url = `https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    return res.status(401).json({
+      message: "Invalid token",
+    });
+  }
 });
 
 app.listen(3000, () =>

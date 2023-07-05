@@ -6,11 +6,8 @@ function nasa() {
   const [nasaTitle, setNasaTitle] = useState(null);
   const [nasaExplanation, setNasaExplanation] = useState(null);
 
-  const NASA_API_KEY = "joS4ocJX2mpkCJHpGk0PLwBX9T0daTTQVKdpI9Mf";
-
   function getNasaImageOfTheDay() {
-    const url = `https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`;
-
+    const url = "http://localhost:5000/nasa-image-of-the-day";
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
